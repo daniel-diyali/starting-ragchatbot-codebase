@@ -5,7 +5,7 @@ const API_URL = '/api';
 let currentSessionId = null;
 
 // DOM elements
-let chatMessages, chatInput, sendButton, totalCourses, courseTitles;
+let chatMessages, chatInput, sendButton, totalCourses, courseTitles, newChatButton;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton = document.getElementById('sendButton');
     totalCourses = document.getElementById('totalCourses');
     courseTitles = document.getElementById('courseTitles');
-    
+    newChatButton = document.getElementById('newChatButton');
+
     setupEventListeners();
     createNewSession();
     loadCourseStats();
@@ -28,8 +29,9 @@ function setupEventListeners() {
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
-    
-    
+    newChatButton.addEventListener('click', startNewChat);
+
+
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -162,10 +164,32 @@ function escapeHtml(text) {
 
 // Removed removeMessage function - no longer needed since we handle loading differently
 
-async function createNewSession() {
+function resetChatUI() {
     currentSessionId = null;
     chatMessages.innerHTML = '';
     addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
+    chatInput.value = '';
+    chatInput.focus();
+}
+
+async function createNewSession() {
+    resetChatUI();
+}
+
+async function startNewChat() {
+    const previousSessionId = currentSessionId;
+
+    // Best-effort backend cleanup of the outgoing session; a failure here
+    // must not block starting the new chat on the client.
+    if (previousSessionId) {
+        try {
+            await fetch(`${API_URL}/session/${previousSessionId}`, { method: 'DELETE' });
+        } catch (error) {
+            console.error('Failed to clean up previous session:', error);
+        }
+    }
+
+    resetChatUI();
 }
 
 // Load course statistics
