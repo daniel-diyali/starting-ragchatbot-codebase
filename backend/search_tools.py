@@ -100,11 +100,20 @@ class CourseSearchTool(Tool):
                 header += f" - Lesson {lesson_num}"
             header += "]"
             
-            # Track source for the UI
+            # Track source for the UI, linked to the lesson video when available
             source = course_title
             if lesson_num is not None:
                 source += f" - Lesson {lesson_num}"
-            sources.append(source)
+
+            # Resolve the link from the course catalog; chunk metadata has none.
+            # Fall back to the course link when the lesson has no link of its own.
+            link = None
+            if lesson_num is not None:
+                link = self.store.get_lesson_link(course_title, lesson_num)
+            if not link:
+                link = self.store.get_course_link(course_title)
+
+            sources.append({"text": source, "link": link})
 
             formatted.append(f"{header}\n{doc}")
 

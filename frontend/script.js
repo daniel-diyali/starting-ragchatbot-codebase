@@ -122,10 +122,26 @@ function addMessage(content, type, sources = null, isWelcome = false) {
     let html = `<div class="message-content">${displayContent}</div>`;
     
     if (sources && sources.length > 0) {
+        // Dedupe repeated citations (the same lesson can back multiple result chunks)
+        const seen = new Set();
+        const uniqueSources = sources.filter(source => {
+            const key = `${source.text}|${source.link || ''}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+
+        const sourcesHtml = uniqueSources.map(source => {
+            const text = escapeHtml(source.text);
+            return source.link
+                ? `<li><a href="${source.link}" target="_blank" rel="noopener noreferrer" class="source-pill source-pill-link">${text}</a></li>`
+                : `<li><span class="source-pill">${text}</span></li>`;
+        }).join('');
+
         html += `
             <details class="sources-collapsible">
                 <summary class="sources-header">Sources</summary>
-                <div class="sources-content">${sources.join(', ')}</div>
+                <ul class="sources-content">${sourcesHtml}</ul>
             </details>
         `;
     }
