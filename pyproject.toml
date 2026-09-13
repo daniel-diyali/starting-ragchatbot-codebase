@@ -13,3 +13,20 @@ dependencies = [
     "python-multipart==0.0.20",
     "python-dotenv==1.1.1",
 ]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+# rootdir-relative, so this works no matter which directory pytest is invoked from
+testpaths = ["backend/tests"]
+pythonpath = ["backend"]
+addopts = "-ra -q --strict-markers"
+markers = [
+    "unit: fast, isolated unit tests with no external I/O",
+    "api: FastAPI endpoint tests exercised via TestClient",
+    "integration: tests that exercise multiple real components together",
+]
