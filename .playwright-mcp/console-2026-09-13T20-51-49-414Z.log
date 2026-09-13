@@ -1,0 +1,9 @@
+[      30ms] [LOG] Loading course stats... @ http://localhost:8792/script.js?v=11:228
+[      32ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8792/api/courses:0
+[      33ms] [ERROR] Error loading course stats: Error: Failed to load course stats
+    at loadCourseStats (http://localhost:8792/script.js?v=11:231:33) @ http://localhost:8792/script.js?v=11:252
+[      35ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8792/favicon.ico:0
+[    4103ms] [LOG] Loading course stats... @ http://localhost:8792/script.js?v=11:228
+[    4104ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8792/api/courses:0
+[    4104ms] [ERROR] Error loading course stats: Error: Failed to load course stats
+    at loadCourseStats (http://localhost:8792/script.js?v=11:231:33) @ http://localhost:8792/script.js?v=11:252
