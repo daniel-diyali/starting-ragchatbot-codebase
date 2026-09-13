@@ -54,3 +54,13 @@ The application will be available at:
 - Web Interface: `http://localhost:8000`
 - API Documentation: `http://localhost:8000/docs`
 
+## Code Quality
+
+The project uses [black](https://black.readthedocs.io/) for formatting and [ruff](https://docs.astral.sh/ruff/) for linting and import sorting (both dev dependencies, installed via `uv sync`). Configuration lives in `pyproject.toml`.
+
+```bash
+./scripts/format.sh   # auto-format with black, apply safe ruff fixes
+./scripts/lint.sh      # ruff check only (no files modified)
+./scripts/check.sh     # black --check + ruff check; run this in CI / before committing
+```
+

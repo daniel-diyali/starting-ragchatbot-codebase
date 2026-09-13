@@ -14,13 +14,20 @@ uv sync                                             # install deps (Python >=3.1
 cd backend && uv run uvicorn app:app --reload --port 8000   # equivalent manual start
 uv add <package>                                    # add a dependency (edit pyproject.toml via uv, not by hand)
 uv run <script>.py                                  # run any Python file
+./scripts/format.sh                                 # black + ruff --fix (mutates files)
+./scripts/lint.sh                                   # ruff check only, no mutation
+./scripts/check.sh                                  # black --check + ruff check; CI-style quality gate
 ```
 
 **Always use `uv`.** Run every Python file and module through `uv run` (`uv run script.py`, `uv run python -m module`) — never bare `python`. Never call `pip` directly; use `uv sync` / `uv add` so `uv.lock` and the managed venv stay in sync.
 
 Requires `ANTHROPIC_API_KEY` in a root `.env` (see `.env.example`). API docs at `/docs`.
 
-There is no test suite, linter, or formatter configured. `main.py` at the repo root is an unused scaffold stub — the real entrypoint is `backend/app.py`.
+There is no test suite configured. `main.py` at the repo root is an unused scaffold stub — the real entrypoint is `backend/app.py`.
+
+### Code quality
+
+Black (formatting) and ruff (linting + import sorting) are dev dependencies, configured in `[tool.black]` / `[tool.ruff]` in `pyproject.toml` (both at `line-length = 100`; ruff's `E501` is disabled since black owns line length). `scripts/format.sh` applies both; `scripts/check.sh` verifies without mutating and is the one to wire into CI or a pre-commit hook. `backend/app.py` carries a `per-file-ignores` entry for `E402` because `warnings.filterwarnings()` intentionally runs before the fastapi/chromadb import chain.
 
 **The server must be started from `backend/`.** Several paths are CWD-relative: `../docs` (startup ingestion), `../frontend` (static mount), and `CHROMA_PATH = "./chroma_db"` → `backend/chroma_db/`. Running uvicorn from the repo root silently creates a second, empty Chroma store and 404s the frontend.
 
