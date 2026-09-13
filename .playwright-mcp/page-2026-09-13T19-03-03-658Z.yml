@@ -1,0 +1,13 @@
+- generic [ref=f4e3]:
+  - complementary [ref=f4e4]:
+    - button "+ New Chat" [ref=f4e6] [cursor=pointer]
+    - group [ref=f4e8]:
+      - generic "▶ Courses" [ref=f4e9] [cursor=pointer]
+    - group [ref=f4e11]:
+      - generic "▶ Try asking:" [ref=f4e12] [cursor=pointer]
+  - main [ref=f4e13]:
+    - generic [ref=f4e14]:
+      - paragraph [ref=f4e18]: Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?
+      - generic [ref=f4e19]:
+        - textbox "Ask about courses, lessons, or specific content..." [active] [ref=f4e20]
+        - button [ref=f4e21] [cursor=pointer]
