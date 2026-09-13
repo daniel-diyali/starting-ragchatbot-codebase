@@ -34,10 +34,15 @@ Provide only the direct answer to what was asked.
         self.model = model
         
         # Pre-build base API parameters
+        # Extended thinking is disabled: on this model it has been observed to
+        # occasionally produce a fully empty final response (empty thinking
+        # block + empty text block, stop_reason "end_turn") for certain
+        # combinations of retrieved tool content, with no such failures seen
+        # once thinking is off.
         self.base_params = {
             "model": self.model,
-            "temperature": 0,
-            "max_tokens": 800
+            "max_tokens": 800,
+            "thinking": {"type": "disabled"}
         }
     
     def generate_response(self, query: str,
@@ -78,13 +83,13 @@ Provide only the direct answer to what was asked.
         
         # Get response from Claude
         response = self.client.messages.create(**api_params)
-        
+
         # Handle tool execution if needed
         if response.stop_reason == "tool_use" and tool_manager:
             return self._handle_tool_execution(response, api_params, tool_manager)
-        
-        # Return direct response
-        return response.content[0].text
+
+        # Return direct response (skip any leading thinking blocks)
+        return self._extract_text(response.content)
     
     def _handle_tool_execution(self, initial_response, base_params: Dict[str, Any], tool_manager):
         """
@@ -132,4 +137,12 @@ Provide only the direct answer to what was asked.
         
         # Get final response
         final_response = self.client.messages.create(**final_params)
-        return final_response.content[0].text
+        return self._extract_text(final_response.content)
+
+    @staticmethod
+    def _extract_text(content_blocks) -> str:
+        """Return the text of the first text block, skipping thinking/other blocks."""
+        for block in content_blocks:
+            if getattr(block, "type", None) == "text":
+                return block.text
+        return ""
