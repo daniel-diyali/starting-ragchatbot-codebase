@@ -18,6 +18,8 @@ dependencies = [
 dev = [
     "black>=26.5.1",
     "ruff>=0.16.7",
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
 ]
 
 [tool.black]
@@ -56,4 +58,15 @@ known-first-party = [
     "search_tools",
     "session_manager",
     "vector_store",
+]
+
+[tool.pytest.ini_options]
+# rootdir-relative, so this works no matter which directory pytest is invoked from
+testpaths = ["backend/tests"]
+pythonpath = ["backend"]
+addopts = "-ra -q --strict-markers"
+markers = [
+    "unit: fast, isolated unit tests with no external I/O",
+    "api: FastAPI endpoint tests exercised via TestClient",
+    "integration: tests that exercise multiple real components together",
 ]
